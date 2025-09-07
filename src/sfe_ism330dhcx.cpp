@@ -10,17 +10,17 @@
 
 bool QwDevISM330DHCX::init(void)
 {
-    //  do we have a bus yet? is the device connected?
-    if (!_sfeBus->ping(_i2cAddress))
-        return false;
+	//  do we have a bus yet? is the device connected?
+	if (!_sfeBus->ping(_i2cAddress))
+		return false;
 
-    initCtx((void *)this, &sfe_dev);
+	initCtx((void *)this, &sfe_dev);
 
-    // I2C ready, now check that we're using the correct sensor before moving on.
-    if (getUniqueId() != ISM330DHCX_ID)
-        return false;
+	// I2C ready, now check that we're using the correct sensor before moving on.
+	if (getUniqueId() != ISM330DHCX_ID)
+		return false;
 
-    return true;
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -35,10 +35,10 @@ bool QwDevISM330DHCX::init(void)
 
 bool QwDevISM330DHCX::isConnected()
 {
-    if (getUniqueId() != ISM330DHCX_ID)
-        return false;
-    else
-        return true;
+	if (getUniqueId() != ISM330DHCX_ID)
+		return false;
+	else
+		return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ bool QwDevISM330DHCX::isConnected()
 
 void QwDevISM330DHCX::setCommunicationBus(sfe_ISM330DHCX::QwIDeviceBus &theBus, uint8_t i2cAddress)
 {
-    _sfeBus = &theBus;
-    _i2cAddress = i2cAddress;
+	_sfeBus = &theBus;
+	_i2cAddress = i2cAddress;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ void QwDevISM330DHCX::setCommunicationBus(sfe_ISM330DHCX::QwIDeviceBus &theBus, 
 
 void QwDevISM330DHCX::setCommunicationBus(sfe_ISM330DHCX::QwIDeviceBus &theBus)
 {
-    _sfeBus = &theBus;
+	_sfeBus = &theBus;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ void QwDevISM330DHCX::setCommunicationBus(sfe_ISM330DHCX::QwIDeviceBus &theBus)
 
 int32_t QwDevISM330DHCX::writeRegisterRegion(uint8_t offset, uint8_t *data, uint16_t length)
 {
-    return _sfeBus->writeRegisterRegion(_i2cAddress, offset, data, length);
+	return _sfeBus->writeRegisterRegion(_i2cAddress, offset, data, length);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ int32_t QwDevISM330DHCX::writeRegisterRegion(uint8_t offset, uint8_t *data, uint
 
 int32_t QwDevISM330DHCX::readRegisterRegion(uint8_t offset, uint8_t *data, uint16_t length)
 {
-    return _sfeBus->readRegisterRegion(_i2cAddress, offset, data, length);
+	return _sfeBus->readRegisterRegion(_i2cAddress, offset, data, length);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -118,18 +118,19 @@ int32_t QwDevISM330DHCX::readRegisterRegion(uint8_t offset, uint8_t *data, uint1
 
 bool QwDevISM330DHCX::setAccelFullScale(uint8_t val)
 {
-    // 0 = 2g, 1 = 16g, 2 = 4g, 3 = 8g
-    if (val > 3)
-        return false;
+	// 0 = 2g, 1 = 16g, 2 = 4g, 3 = 8g
+	if (val > 3)
+		return false;
 
-    int32_t retVal = (ism330dhcx_xl_full_scale_set(&sfe_dev, (ism330dhcx_fs_xl_t)val));
+	int32_t retVal = (ism330dhcx_xl_full_scale_set(&sfe_dev,
+												   (ism330dhcx_fs_xl_t)val));
 
-    fullScaleAccel = val;
+	fullScaleAccel = val;
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -145,18 +146,19 @@ bool QwDevISM330DHCX::setAccelFullScale(uint8_t val)
 //
 bool QwDevISM330DHCX::setGyroFullScale(uint8_t val)
 {
-    // 0,1,2,4,8,12
-    if (val > 12)
-        return false;
+	// 0,1,2,4,8,12
+	if (val > 12)
+		return false;
 
-    int32_t retVal = ism330dhcx_gy_full_scale_set(&sfe_dev, (ism330dhcx_fs_g_t)val);
+	int32_t retVal = ism330dhcx_gy_full_scale_set(&sfe_dev,
+												  (ism330dhcx_fs_g_t)val);
 
-    fullScaleGyro = val;
+	fullScaleGyro = val;
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,30 +170,13 @@ bool QwDevISM330DHCX::setGyroFullScale(uint8_t val)
 uint8_t QwDevISM330DHCX::getAccelFullScale()
 {
 
-    ism330dhcx_fs_xl_t val;
-    int32_t retVal = ism330dhcx_xl_full_scale_get(&sfe_dev, &val);
+	ism330dhcx_fs_xl_t val;
+	int32_t retVal = ism330dhcx_xl_full_scale_get(&sfe_dev, &val);
 
-    if (retVal != 0)
-        return -1;
+	if (retVal != 0)
+		return -1;
 
-    return (uint8_t)val;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// getGyroFullScale()
-//
-// Retrieves the scale of the gyroscope's readings
-//
-
-uint8_t QwDevISM330DHCX::getGyroFullScale()
-{
-    ism330dhcx_fs_g_t val;
-    int32_t retVal = ism330dhcx_gy_full_scale_get(&sfe_dev, &val);
-
-    if (retVal != 0)
-        return -1;
-
-    return (uint8_t)val;
+	return (uint8_t)val;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -203,13 +188,13 @@ uint8_t QwDevISM330DHCX::getGyroFullScale()
 uint8_t QwDevISM330DHCX::getUniqueId()
 {
 
-    uint8_t buff = 0;
-    int32_t retVal = (ism330dhcx_device_id_get(&sfe_dev, &buff));
+	uint8_t buff = 0;
+	int32_t retVal = (ism330dhcx_device_id_get(&sfe_dev, &buff));
 
-    if (retVal != 0)
-        return 0;
+	if (retVal != 0)
+		return 0;
 
-    return buff;
+	return buff;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -221,13 +206,13 @@ uint8_t QwDevISM330DHCX::getUniqueId()
 int16_t QwDevISM330DHCX::getTemp()
 {
 
-    int16_t tempVal;
-    int32_t retVal = ism330dhcx_temperature_raw_get(&sfe_dev, &tempVal);
+	int16_t tempVal;
+	int32_t retVal = ism330dhcx_temperature_raw_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return -1;
+	if (retVal != 0)
+		return -1;
 
-    return tempVal;
+	return tempVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -241,17 +226,17 @@ int16_t QwDevISM330DHCX::getTemp()
 
 bool QwDevISM330DHCX::getRawAccel(sfe_ism_raw_data_t *accelData)
 {
-    int16_t tempVal[3] = {0};
-    int32_t retVal = ism330dhcx_acceleration_raw_get(&sfe_dev, tempVal);
+	int16_t tempVal[3] = {0};
+	int32_t retVal = ism330dhcx_acceleration_raw_get(&sfe_dev, tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    accelData->xData = tempVal[0];
-    accelData->yData = tempVal[1];
-    accelData->zData = tempVal[2];
+	accelData->xData = tempVal[0];
+	accelData->yData = tempVal[1];
+	accelData->zData = tempVal[2];
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -267,17 +252,17 @@ bool QwDevISM330DHCX::getRawAccel(sfe_ism_raw_data_t *accelData)
 bool QwDevISM330DHCX::getRawGyro(sfe_ism_raw_data_t *gyroData)
 {
 
-    int16_t tempVal[3] = {0};
-    int32_t retVal = ism330dhcx_angular_rate_raw_get(&sfe_dev, tempVal);
+	int16_t tempVal[3] = {0};
+	int32_t retVal = ism330dhcx_angular_rate_raw_get(&sfe_dev, tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    gyroData->xData = tempVal[0];
-    gyroData->yData = tempVal[1];
-    gyroData->zData = tempVal[2];
+	gyroData->xData = tempVal[0];
+	gyroData->yData = tempVal[1];
+	gyroData->zData = tempVal[2];
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -293,41 +278,41 @@ bool QwDevISM330DHCX::getRawGyro(sfe_ism_raw_data_t *gyroData)
 bool QwDevISM330DHCX::getAccel(sfe_ism_data_t *accelData)
 {
 
-    int16_t tempVal[3] = {0};
-    int32_t retVal = ism330dhcx_acceleration_raw_get(&sfe_dev, tempVal);
+	int16_t tempVal[3] = {0};
+	int32_t retVal = ism330dhcx_acceleration_raw_get(&sfe_dev, tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    // "fullScaleAccel" is a private variable that keeps track of the users settings
-    // so that the register values can be converted accordingly
-    switch (fullScaleAccel)
-    {
-    case 0:
-        accelData->xData = convert2gToMg(tempVal[0]);
-        accelData->yData = convert2gToMg(tempVal[1]);
-        accelData->zData = convert2gToMg(tempVal[2]);
-        break;
-    case 1:
-        accelData->xData = convert16gToMg(tempVal[0]);
-        accelData->yData = convert16gToMg(tempVal[1]);
-        accelData->zData = convert16gToMg(tempVal[2]);
-        break;
-    case 2:
-        accelData->xData = convert4gToMg(tempVal[0]);
-        accelData->yData = convert4gToMg(tempVal[1]);
-        accelData->zData = convert4gToMg(tempVal[2]);
-        break;
-    case 3:
-        accelData->xData = convert8gToMg(tempVal[0]);
-        accelData->yData = convert8gToMg(tempVal[1]);
-        accelData->zData = convert8gToMg(tempVal[2]);
-        break;
-    default:
-        return false; // Something has gone wrong
-    }
+	// "fullScaleAccel" is a private variable that keeps track of the users settings
+	// so that the register values can be converted accordingly
+	switch (fullScaleAccel)
+	{
+	case 0:
+		accelData->xData = convert2gToMg(tempVal[0]);
+		accelData->yData = convert2gToMg(tempVal[1]);
+		accelData->zData = convert2gToMg(tempVal[2]);
+		break;
+	case 1:
+		accelData->xData = convert16gToMg(tempVal[0]);
+		accelData->yData = convert16gToMg(tempVal[1]);
+		accelData->zData = convert16gToMg(tempVal[2]);
+		break;
+	case 2:
+		accelData->xData = convert4gToMg(tempVal[0]);
+		accelData->yData = convert4gToMg(tempVal[1]);
+		accelData->zData = convert4gToMg(tempVal[2]);
+		break;
+	case 3:
+		accelData->xData = convert8gToMg(tempVal[0]);
+		accelData->yData = convert8gToMg(tempVal[1]);
+		accelData->zData = convert8gToMg(tempVal[2]);
+		break;
+	default:
+		return false; // Something has gone wrong
+	}
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -343,51 +328,51 @@ bool QwDevISM330DHCX::getAccel(sfe_ism_data_t *accelData)
 bool QwDevISM330DHCX::getGyro(sfe_ism_data_t *gyroData)
 {
 
-    int16_t tempVal[3] = {0};
-    int32_t retVal = ism330dhcx_angular_rate_raw_get(&sfe_dev, tempVal);
+	int16_t tempVal[3] = {0};
+	int32_t retVal = ism330dhcx_angular_rate_raw_get(&sfe_dev, tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    // "fullScaleGyro" is a private variable that keeps track of the users settings
-    // so that the register values can be converted accordingly
-    switch (fullScaleGyro)
-    {
-    case 0:
-        gyroData->xData = convert250dpsToMdps(tempVal[0]);
-        gyroData->yData = convert250dpsToMdps(tempVal[1]);
-        gyroData->zData = convert250dpsToMdps(tempVal[2]);
-        break;
-    case 1:
-        gyroData->xData = convert4000dpsToMdps(tempVal[0]);
-        gyroData->yData = convert4000dpsToMdps(tempVal[1]);
-        gyroData->zData = convert4000dpsToMdps(tempVal[2]);
-        break;
-    case 2:
-        gyroData->xData = convert125dpsToMdps(tempVal[0]);
-        gyroData->yData = convert125dpsToMdps(tempVal[1]);
-        gyroData->zData = convert125dpsToMdps(tempVal[2]);
-        break;
-    case 4:
-        gyroData->xData = convert500dpsToMdps(tempVal[0]);
-        gyroData->yData = convert500dpsToMdps(tempVal[1]);
-        gyroData->zData = convert500dpsToMdps(tempVal[2]);
-        break;
-    case 8:
-        gyroData->xData = convert1000dpsToMdps(tempVal[0]);
-        gyroData->yData = convert1000dpsToMdps(tempVal[1]);
-        gyroData->zData = convert1000dpsToMdps(tempVal[2]);
-        break;
-    case 12:
-        gyroData->xData = convert2000dpsToMdps(tempVal[0]);
-        gyroData->yData = convert2000dpsToMdps(tempVal[1]);
-        gyroData->zData = convert2000dpsToMdps(tempVal[2]);
-        break;
-    default:
-        return false; // Something has gone wrong
-    }
+	// "fullScaleGyro" is a private variable that keeps track of the users settings
+	// so that the register values can be converted accordingly
+	switch (fullScaleGyro)
+	{
+	case 0:
+		gyroData->xData = convert250dpsToMdps(tempVal[0]);
+		gyroData->yData = convert250dpsToMdps(tempVal[1]);
+		gyroData->zData = convert250dpsToMdps(tempVal[2]);
+		break;
+	case 1:
+		gyroData->xData = convert4000dpsToMdps(tempVal[0]);
+		gyroData->yData = convert4000dpsToMdps(tempVal[1]);
+		gyroData->zData = convert4000dpsToMdps(tempVal[2]);
+		break;
+	case 2:
+		gyroData->xData = convert125dpsToMdps(tempVal[0]);
+		gyroData->yData = convert125dpsToMdps(tempVal[1]);
+		gyroData->zData = convert125dpsToMdps(tempVal[2]);
+		break;
+	case 4:
+		gyroData->xData = convert500dpsToMdps(tempVal[0]);
+		gyroData->yData = convert500dpsToMdps(tempVal[1]);
+		gyroData->zData = convert500dpsToMdps(tempVal[2]);
+		break;
+	case 8:
+		gyroData->xData = convert1000dpsToMdps(tempVal[0]);
+		gyroData->yData = convert1000dpsToMdps(tempVal[1]);
+		gyroData->zData = convert1000dpsToMdps(tempVal[2]);
+		break;
+	case 12:
+		gyroData->xData = convert2000dpsToMdps(tempVal[0]);
+		gyroData->yData = convert2000dpsToMdps(tempVal[1]);
+		gyroData->zData = convert2000dpsToMdps(tempVal[2]);
+		break;
+	default:
+		return false; // Something has gone wrong
+	}
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -397,57 +382,57 @@ bool QwDevISM330DHCX::getGyro(sfe_ism_data_t *gyroData)
 
 float QwDevISM330DHCX::convert2gToMg(int16_t data)
 {
-    return (ism330dhcx_from_fs2g_to_mg(data));
+	return (ism330dhcx_from_fs2g_to_mg(data));
 }
 
 float QwDevISM330DHCX::convert4gToMg(int16_t data)
 {
-    return (ism330dhcx_from_fs4g_to_mg(data));
+	return (ism330dhcx_from_fs4g_to_mg(data));
 }
 
 float QwDevISM330DHCX::convert8gToMg(int16_t data)
 {
-    return (ism330dhcx_from_fs8g_to_mg(data));
+	return (ism330dhcx_from_fs8g_to_mg(data));
 }
 
 float QwDevISM330DHCX::convert16gToMg(int16_t data)
 {
-    return (ism330dhcx_from_fs16g_to_mg(data));
+	return (ism330dhcx_from_fs16g_to_mg(data));
 }
 
 float QwDevISM330DHCX::convert125dpsToMdps(int16_t data)
 {
-    return (ism330dhcx_from_fs125dps_to_mdps(data));
+	return (ism330dhcx_from_fs125dps_to_mdps(data));
 }
 
 float QwDevISM330DHCX::convert250dpsToMdps(int16_t data)
 {
-    return (ism330dhcx_from_fs250dps_to_mdps(data));
+	return (ism330dhcx_from_fs250dps_to_mdps(data));
 }
 
 float QwDevISM330DHCX::convert500dpsToMdps(int16_t data)
 {
-    return (ism330dhcx_from_fs500dps_to_mdps(data));
+	return (ism330dhcx_from_fs500dps_to_mdps(data));
 }
 
 float QwDevISM330DHCX::convert1000dpsToMdps(int16_t data)
 {
-    return (ism330dhcx_from_fs1000dps_to_mdps(data));
+	return (ism330dhcx_from_fs1000dps_to_mdps(data));
 }
 
 float QwDevISM330DHCX::convert2000dpsToMdps(int16_t data)
 {
-    return (ism330dhcx_from_fs2000dps_to_mdps(data));
+	return (ism330dhcx_from_fs2000dps_to_mdps(data));
 }
 
 float QwDevISM330DHCX::convert4000dpsToMdps(int16_t data)
 {
-    return (ism330dhcx_from_fs4000dps_to_mdps(data));
+	return (ism330dhcx_from_fs4000dps_to_mdps(data));
 }
 
 float QwDevISM330DHCX::convertToCelsius(int16_t data)
 {
-    return (ism330dhcx_from_lsb_to_celsius(data));
+	return (ism330dhcx_from_lsb_to_celsius(data));
 }
 
 //
@@ -472,14 +457,14 @@ float QwDevISM330DHCX::convertToCelsius(int16_t data)
 
 bool QwDevISM330DHCX::setDeviceConfig(bool enable)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_device_conf_set(&sfe_dev, (uint8_t)enable);
+	retVal = ism330dhcx_device_conf_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -490,14 +475,14 @@ bool QwDevISM330DHCX::setDeviceConfig(bool enable)
 
 bool QwDevISM330DHCX::deviceReset()
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_reset_set(&sfe_dev, 1);
+	retVal = ism330dhcx_reset_set(&sfe_dev, 1);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -509,19 +494,19 @@ bool QwDevISM330DHCX::deviceReset()
 bool QwDevISM330DHCX::getDeviceReset()
 {
 
-    int32_t retVal;
-    uint8_t tempVal;
-    retVal = ism330dhcx_reset_get(&sfe_dev, &tempVal);
+	int32_t retVal;
+	uint8_t tempVal;
+	retVal = ism330dhcx_reset_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if ((tempVal & 0x01) == 0x00)
-    {
-        return true;
-    }
+	if ((tempVal & 0x01) == 0x00)
+	{
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -537,16 +522,17 @@ bool QwDevISM330DHCX::getDeviceReset()
 
 bool QwDevISM330DHCX::setAccelSlopeFilter(uint8_t val)
 {
-    int32_t retVal;
-    if (val > 0x37)
-        return false;
+	int32_t retVal;
+	if (val > 0x37)
+		return false;
 
-    retVal = ism330dhcx_xl_hp_path_on_out_set(&sfe_dev, (ism330dhcx_hp_slope_xl_en_t)val);
+	retVal = ism330dhcx_xl_hp_path_on_out_set(&sfe_dev,
+											  (ism330dhcx_hp_slope_xl_en_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -561,15 +547,18 @@ bool QwDevISM330DHCX::setAccelSlopeFilter(uint8_t val)
 
 bool QwDevISM330DHCX::setAccelFilterLP2(bool enable)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_xl_filter_lp2_set(&sfe_dev, (uint8_t)enable);
+	retVal = ism330dhcx_xl_filter_lp2_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////
 // setGyroFilterLP1()
@@ -583,14 +572,14 @@ bool QwDevISM330DHCX::setAccelFilterLP2(bool enable)
 
 bool QwDevISM330DHCX::setGyroFilterLP1(bool enable)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_gy_filter_lp1_set(&sfe_dev, (uint8_t)enable);
+	retVal = ism330dhcx_gy_filter_lp1_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -607,16 +596,17 @@ bool QwDevISM330DHCX::setGyroFilterLP1(bool enable)
 
 bool QwDevISM330DHCX::setGyroLP1Bandwidth(uint8_t val)
 {
-    int32_t retVal;
-    if (val > 7)
-        return false;
+	int32_t retVal;
+	if (val > 7)
+		return false;
 
-    retVal = ism330dhcx_gy_lp1_bandwidth_set(&sfe_dev, (ism330dhcx_ftype_t)val);
+	retVal = ism330dhcx_gy_lp1_bandwidth_set(&sfe_dev,
+											 (ism330dhcx_ftype_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -632,12 +622,12 @@ bool QwDevISM330DHCX::setGyroLP1Bandwidth(uint8_t val)
 bool QwDevISM330DHCX::setBlockDataUpdate(bool enable)
 {
 
-    int32_t retVal = ism330dhcx_block_data_update_set(&sfe_dev, (uint8_t)enable);
+	int32_t retVal = ism330dhcx_block_data_update_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -650,11 +640,11 @@ bool QwDevISM330DHCX::setBlockDataUpdate(bool enable)
 uint8_t QwDevISM330DHCX::getBlockDataUpdate()
 {
 
-    uint8_t tempVal;
-    int32_t retVal = ism330dhcx_block_data_update_get(&sfe_dev, &tempVal);
+	uint8_t tempVal;
+	int32_t retVal = ism330dhcx_block_data_update_get(&sfe_dev, &tempVal);
 
-    (void)retVal;
-    return tempVal;
+	(void)retVal;
+	return tempVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -670,15 +660,28 @@ uint8_t QwDevISM330DHCX::getBlockDataUpdate()
 
 bool QwDevISM330DHCX::setAccelDataRate(uint8_t rate)
 {
-    if (rate > 11)
-        return false;
+	if (rate > 11)
+		return false;
 
-    int32_t retVal = ism330dhcx_xl_data_rate_set(&sfe_dev, (ism330dhcx_odr_xl_t)rate);
+	int32_t retVal = ism330dhcx_xl_data_rate_set(&sfe_dev, (ism330dhcx_odr_xl_t)rate);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
+}
+
+bool QwDevISM330DHCX::setAccelPowerMode(int8_t val)
+{
+	if (val > 1)
+		return false;
+
+	int32_t retVal = ism330dhcx_xl_power_mode_set(&sfe_dev, (ism330dhcx_xl_hm_mode_t)val);
+
+	if (retVal != 0)
+		return false;
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -695,15 +698,15 @@ bool QwDevISM330DHCX::setAccelDataRate(uint8_t rate)
 
 bool QwDevISM330DHCX::setGyroDataRate(uint8_t rate)
 {
-    if (rate > 10)
-        return false;
+	if (rate > 10)
+		return false;
 
-    int32_t retVal = ism330dhcx_gy_data_rate_set(&sfe_dev, (ism330dhcx_odr_g_t)rate);
+	int32_t retVal = ism330dhcx_gy_data_rate_set(&sfe_dev, (ism330dhcx_odr_g_t)rate);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -718,14 +721,14 @@ bool QwDevISM330DHCX::setGyroDataRate(uint8_t rate)
 
 bool QwDevISM330DHCX::enableTimestamp(bool enable)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_timestamp_set(&sfe_dev, (uint8_t)enable);
+	retVal = ism330dhcx_timestamp_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -737,14 +740,14 @@ bool QwDevISM330DHCX::enableTimestamp(bool enable)
 
 bool QwDevISM330DHCX::resetTimestamp()
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_timestamp_rst(&sfe_dev);
+	retVal = ism330dhcx_timestamp_rst(&sfe_dev);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 //
 //
@@ -771,17 +774,17 @@ bool QwDevISM330DHCX::resetTimestamp()
 
 bool QwDevISM330DHCX::setFifoWatermark(uint16_t val)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    if (val > 511)
-        return false;
+	if (val > 511)
+		return false;
 
-    retVal = ism330dhcx_fifo_watermark_set(&sfe_dev, val);
+	retVal = ism330dhcx_fifo_watermark_set(&sfe_dev, val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -798,19 +801,75 @@ bool QwDevISM330DHCX::setFifoWatermark(uint16_t val)
 
 bool QwDevISM330DHCX::setFifoMode(uint8_t val)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    if (val > 7)
-        return false;
+	if (val > 7)
+		return false;
 
-    retVal = ism330dhcx_fifo_mode_set(&sfe_dev, (ism330dhcx_fifo_mode_t)val);
+	retVal = ism330dhcx_fifo_mode_set(&sfe_dev,
+									  (ism330dhcx_fifo_mode_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// getFifoStatus()
+//
+// Gets the number of unread words in the FIFO
+//
+
+uint16_t QwDevISM330DHCX::getFifoStatus()
+{
+	uint16_t tempVal;
+	int32_t retVal = ism330dhcx_fifo_data_level_get(&sfe_dev, &tempVal);
+
+	if (retVal != 0)
+		return 0;
+
+	return tempVal;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// getFIFOData()
+//
+// Reads a specified number of samples from the FIFO in a single bulk transaction
+// and parses the raw data.
+//
+//  Parameter    Description
+//  ---------    -----------------------------
+//  data         Pointer to an array of sfe_ism_raw_data_t structs to store data.
+//  samples      The number of samples (X, Y, Z sets) to read.
+
+bool QwDevISM330DHCX::getFIFOData(sfe_ism_raw_data_t *data, uint16_t samples)
+{
+	// Each sample is 7 bytes (1 tag + 6 data)
+	uint16_t bytesToRead = 1 + (samples * 7);
+
+	// Create a buffer on the stack to hold all raw FIFO data
+	uint8_t rawData[bytesToRead];
+
+	// Perform a single bulk read of the FIFO data
+	if (readRegisterRegion(FIFO_DATA_OUT_TAG, rawData, bytesToRead) != 0)
+		return false;
+
+	// Now, parse the raw data into the struct array
+	for (uint16_t i = 0; i < samples; i++)
+	{
+		// Calculate the starting index for the current sample's data
+		// The first byte of each 7-byte word is the tag, which we skip (hence ii + 1)
+		uint16_t index = i * 7;
+
+		// The data is little-endian: LSB then MSB
+		data[i].xData = (int16_t)(rawData[index + 2] << 8) | rawData[index + 1];
+		data[i].yData = (int16_t)(rawData[index + 4] << 8) | rawData[index + 3];
+		data[i].zData = (int16_t)(rawData[index + 6] << 8) | rawData[index + 5];
+	}
+
+	return true;
+}
 //////////////////////////////////////////////////////////////////////////////////
 // setAccelFifoBatchSet()
 //
@@ -825,16 +884,17 @@ bool QwDevISM330DHCX::setFifoMode(uint8_t val)
 
 bool QwDevISM330DHCX::setAccelFifoBatchSet(uint8_t val)
 {
-    int32_t retVal;
-    if (val > 11)
-        return false;
+	int32_t retVal;
+	if (val > 11)
+		return false;
 
-    retVal = ism330dhcx_fifo_xl_batch_set(&sfe_dev, (ism330dhcx_bdr_xl_t)val);
+	retVal = ism330dhcx_fifo_xl_batch_set(&sfe_dev,
+										  (ism330dhcx_bdr_xl_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -850,16 +910,17 @@ bool QwDevISM330DHCX::setAccelFifoBatchSet(uint8_t val)
 
 bool QwDevISM330DHCX::setGyroFifoBatchSet(uint8_t val)
 {
-    int32_t retVal;
-    if (val > 11)
-        return false;
+	int32_t retVal;
+	if (val > 11)
+		return false;
 
-    retVal = ism330dhcx_fifo_gy_batch_set(&sfe_dev, (ism330dhcx_bdr_gy_t)val);
+	retVal = ism330dhcx_fifo_gy_batch_set(&sfe_dev,
+										  (ism330dhcx_bdr_gy_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -875,16 +936,17 @@ bool QwDevISM330DHCX::setGyroFifoBatchSet(uint8_t val)
 
 bool QwDevISM330DHCX::setFifoTimestampDec(uint8_t val)
 {
-    int32_t retVal;
-    if (val > 3)
-        return false;
+	int32_t retVal;
+	if (val > 3)
+		return false;
 
-    retVal = ism330dhcx_fifo_timestamp_decimation_set(&sfe_dev, (ism330dhcx_odr_ts_batch_t)val);
+	retVal = ism330dhcx_fifo_timestamp_decimation_set(&sfe_dev,
+													  (ism330dhcx_odr_ts_batch_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //
@@ -912,23 +974,23 @@ bool QwDevISM330DHCX::setFifoTimestampDec(uint8_t val)
 
 bool QwDevISM330DHCX::setPinMode(bool activeLow)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    // 0 = active high :  active low, 1
-    retVal = ism330dhcx_pin_polarity_set(&sfe_dev, (ism330dhcx_h_lactive_t)activeLow);
+	// 0 = active high :  active low, 1
+	retVal = ism330dhcx_pin_polarity_set(&sfe_dev, (ism330dhcx_h_lactive_t)activeLow);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if (activeLow)
-        // pinmode must be set to push-pull when active low is set.
-        // See section 9.14 on pg 51 of datasheet for more information
-        retVal = ism330dhcx_pin_mode_set(&sfe_dev, (ism330dhcx_pp_od_t)0);
+	if (activeLow)
+		// pinmode must be set to push-pull when active low is set.
+		// See section 9.14 on pg 51 of datasheet for more information
+		retVal = ism330dhcx_pin_mode_set(&sfe_dev, (ism330dhcx_pp_od_t)0);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -944,16 +1006,99 @@ bool QwDevISM330DHCX::setPinMode(bool activeLow)
 
 bool QwDevISM330DHCX::setIntNotification(uint8_t val)
 {
-    int32_t retVal;
-    if (val > 4)
-        return false;
+	int32_t retVal;
+	if (val > 4)
+		return false;
 
-    retVal = ism330dhcx_int_notification_set(&sfe_dev, (ism330dhcx_lir_t)val);
+	retVal = ism330dhcx_int_notification_set(&sfe_dev,
+											 (ism330dhcx_lir_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// setFifoStatustoInt1
+//
+// Sends the Fifo Threhold data ready signal to interrupt one.
+//
+
+bool QwDevISM330DHCX::setFifoStatustoInt1(bool enable)
+{
+
+	int32_t retVal;
+
+	ism330dhcx_pin_int1_route_t int1_route;
+
+	retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
+
+	if (retVal != 0)
+		return false;
+
+	int1_route.int1_ctrl.int1_fifo_th = (uint8_t)enable;
+
+	retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
+
+	if (retVal != 0)
+		return false;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// setFIFOThresholdInt1
+//
+// Sends the accelerometer's data ready signal to interrupt one.
+//
+bool QwDevISM330DHCX::setFIFOThresholdInt1(bool enable)
+{
+
+	int32_t retVal;
+
+	ism330dhcx_pin_int1_route_t int1_route;
+
+	retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
+
+	if (retVal != 0)
+		return false;
+
+	int1_route.int1_ctrl.int1_fifo_th = (uint8_t)enable;
+
+	retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
+
+	if (retVal != 0)
+		return false;
+
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// setBatchCounterInt1
+//
+// Sends the accelerometer's data ready signal to interrupt one.
+//
+bool QwDevISM330DHCX::setBatchCounterInt1(bool enable)
+{
+
+	int32_t retVal;
+
+	ism330dhcx_pin_int1_route_t int1_route;
+
+	retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
+
+	if (retVal != 0)
+		return false;
+
+	int1_route.int1_ctrl.int1_cnt_bdr = (uint8_t)enable;
+
+	retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
+
+	if (retVal != 0)
+		return false;
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -965,78 +1110,23 @@ bool QwDevISM330DHCX::setIntNotification(uint8_t val)
 bool QwDevISM330DHCX::setAccelStatustoInt1(bool enable)
 {
 
-    int32_t retVal;
+	int32_t retVal;
 
-    ism330dhcx_pin_int1_route_t int1_route;
+	ism330dhcx_pin_int1_route_t int1_route;
 
-    retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
+	retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    int1_route.int1_ctrl.int1_drdy_xl = (uint8_t)enable;
+	int1_route.int1_ctrl.int1_drdy_xl = (uint8_t)enable;
 
-    retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
+	retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////
-// setFIFOThresholdInt1
-//
-// Sends the accelerometer's data ready signal to interrupt one.
-//
-bool QwDevISM330DHCX::setFIFOThresholdInt1(bool enable)
-{
-
-    int32_t retVal;
-
-    ism330dhcx_pin_int1_route_t int1_route;
-
-    retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
-
-    if (retVal != 0)
-        return false;
-
-    int1_route.int1_ctrl.int1_fifo_th = (uint8_t)enable;
-
-    retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
-
-    if (retVal != 0)
-        return false;
-
-    return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-// setBatchCounterInt1
-//
-// Sends the accelerometer's data ready signal to interrupt one.
-//
-bool QwDevISM330DHCX::setBatchCounterInt1(bool enable)
-{
-
-    int32_t retVal;
-
-    ism330dhcx_pin_int1_route_t int1_route;
-
-    retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
-
-    if (retVal != 0)
-        return false;
-
-    int1_route.int1_ctrl.int1_cnt_bdr = (uint8_t)enable;
-
-    retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
-
-    if (retVal != 0)
-        return false;
-
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1048,23 +1138,23 @@ bool QwDevISM330DHCX::setBatchCounterInt1(bool enable)
 bool QwDevISM330DHCX::setAccelStatustoInt2(bool enable)
 {
 
-    int32_t retVal;
+	int32_t retVal;
 
-    ism330dhcx_pin_int2_route_t int2_route;
+	ism330dhcx_pin_int2_route_t int2_route;
 
-    retVal = ism330dhcx_pin_int2_route_get(&sfe_dev, &int2_route);
+	retVal = ism330dhcx_pin_int2_route_get(&sfe_dev, &int2_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    int2_route.int2_ctrl.int2_drdy_xl = (uint8_t)enable;
+	int2_route.int2_ctrl.int2_drdy_xl = (uint8_t)enable;
 
-    retVal = ism330dhcx_pin_int2_route_set(&sfe_dev, &int2_route);
+	retVal = ism330dhcx_pin_int2_route_set(&sfe_dev, &int2_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1075,23 +1165,23 @@ bool QwDevISM330DHCX::setAccelStatustoInt2(bool enable)
 bool QwDevISM330DHCX::setGyroStatustoInt1(bool enable)
 {
 
-    int32_t retVal;
+	int32_t retVal;
 
-    ism330dhcx_pin_int1_route_t int1_route;
+	ism330dhcx_pin_int1_route_t int1_route;
 
-    retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
+	retVal = ism330dhcx_pin_int1_route_get(&sfe_dev, &int1_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    int1_route.int1_ctrl.int1_drdy_g = (uint8_t)enable;
+	int1_route.int1_ctrl.int1_drdy_g = (uint8_t)enable;
 
-    retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
+	retVal = ism330dhcx_pin_int1_route_set(&sfe_dev, &int1_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1102,23 +1192,23 @@ bool QwDevISM330DHCX::setGyroStatustoInt1(bool enable)
 bool QwDevISM330DHCX::setGyroStatustoInt2(bool enable)
 {
 
-    int32_t retVal;
+	int32_t retVal;
 
-    ism330dhcx_pin_int2_route_t int2_route;
+	ism330dhcx_pin_int2_route_t int2_route;
 
-    retVal = ism330dhcx_pin_int2_route_get(&sfe_dev, &int2_route);
+	retVal = ism330dhcx_pin_int2_route_get(&sfe_dev, &int2_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    int2_route.int2_ctrl.int2_drdy_g = (uint8_t)enable;
+	int2_route.int2_ctrl.int2_drdy_g = (uint8_t)enable;
 
-    retVal = ism330dhcx_pin_int2_route_set(&sfe_dev, &int2_route);
+	retVal = ism330dhcx_pin_int2_route_set(&sfe_dev, &int2_route);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1129,18 +1219,19 @@ bool QwDevISM330DHCX::setGyroStatustoInt2(bool enable)
 //
 bool QwDevISM330DHCX::setDataReadyMode(uint8_t val)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    // 0 = Latched, 1 = Pulsed
-    if (val > 1)
-        return false;
+	// 0 = Latched, 1 = Pulsed
+	if (val > 1)
+		return false;
 
-    retVal = ism330dhcx_data_ready_mode_set(&sfe_dev, (ism330dhcx_dataready_pulsed_t)val);
+	retVal = ism330dhcx_data_ready_mode_set(&sfe_dev,
+											(ism330dhcx_dataready_pulsed_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 //
 //
@@ -1169,16 +1260,16 @@ bool QwDevISM330DHCX::setDataReadyMode(uint8_t val)
 
 bool QwDevISM330DHCX::setHubODR(uint8_t rate)
 {
-    // 0 = 104Hz, 1 = 52Hz, 2 = 26Hz, 3 = 13Hz
-    if (rate > 3)
-        return false;
+	// 0 = 104Hz, 1 = 52Hz, 2 = 26Hz, 3 = 13Hz
+	if (rate > 3)
+		return false;
 
-    int32_t retVal = ism330dhcx_sh_data_rate_set(&sfe_dev, (ism330dhcx_shub_odr_t)rate);
+	int32_t retVal = ism330dhcx_sh_data_rate_set(&sfe_dev, (ism330dhcx_shub_odr_t)rate);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1196,38 +1287,38 @@ bool QwDevISM330DHCX::setHubODR(uint8_t rate)
 //
 bool QwDevISM330DHCX::setHubSensorRead(uint8_t sensor, sfe_hub_sensor_settings_t *settings)
 {
-    int32_t retVal;
-    ism330dhcx_sh_cfg_read_t tempSett;
+	int32_t retVal;
+	ism330dhcx_sh_cfg_read_t tempSett;
 
-    if (sensor > 3)
-        return false;
+	if (sensor > 3)
+		return false;
 
-    tempSett.slv_add = settings->address;
-    tempSett.slv_subadd = settings->subAddress;
-    tempSett.slv_len = settings->lenData;
+	tempSett.slv_add = settings->address;
+	tempSett.slv_subadd = settings->subAddress;
+	tempSett.slv_len = settings->lenData;
 
-    switch (sensor)
-    {
-    case 0:
-        retVal = ism330dhcx_sh_slv0_cfg_read(&sfe_dev, &tempSett);
-        break;
-    case 1:
-        retVal = ism330dhcx_sh_slv1_cfg_read(&sfe_dev, &tempSett);
-        break;
-    case 2:
-        retVal = ism330dhcx_sh_slv2_cfg_read(&sfe_dev, &tempSett);
-        break;
-    case 3:
-        retVal = ism330dhcx_sh_slv3_cfg_read(&sfe_dev, &tempSett);
-        break;
-    default:
-        return false;
-    }
+	switch (sensor)
+	{
+	case 0:
+		retVal = ism330dhcx_sh_slv0_cfg_read(&sfe_dev, &tempSett);
+		break;
+	case 1:
+		retVal = ism330dhcx_sh_slv1_cfg_read(&sfe_dev, &tempSett);
+		break;
+	case 2:
+		retVal = ism330dhcx_sh_slv2_cfg_read(&sfe_dev, &tempSett);
+		break;
+	case 3:
+		retVal = ism330dhcx_sh_slv3_cfg_read(&sfe_dev, &tempSett);
+		break;
+	default:
+		return false;
+	}
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1243,19 +1334,19 @@ bool QwDevISM330DHCX::setHubSensorRead(uint8_t sensor, sfe_hub_sensor_settings_t
 
 bool QwDevISM330DHCX::setHubSensorWrite(sfe_hub_sensor_settings_t *settings)
 {
-    int32_t retVal;
-    ism330dhcx_sh_cfg_write_t tempSett;
+	int32_t retVal;
+	ism330dhcx_sh_cfg_write_t tempSett;
 
-    tempSett.slv0_add = settings->address;
-    tempSett.slv0_subadd = settings->subAddress;
-    tempSett.slv0_data = settings->lenData;
+	tempSett.slv0_add = settings->address;
+	tempSett.slv0_subadd = settings->subAddress;
+	tempSett.slv0_data = settings->lenData;
 
-    retVal = ism330dhcx_sh_cfg_write(&sfe_dev, &tempSett);
+	retVal = ism330dhcx_sh_cfg_write(&sfe_dev, &tempSett);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1271,16 +1362,17 @@ bool QwDevISM330DHCX::setHubSensorWrite(sfe_hub_sensor_settings_t *settings)
 bool QwDevISM330DHCX::setNumberHubSensors(uint8_t numSensors)
 {
 
-    int32_t retVal;
-    if (numSensors > 3)
-        return false;
+	int32_t retVal;
+	if (numSensors > 3)
+		return false;
 
-    retVal = ism330dhcx_sh_slave_connected_set(&sfe_dev, (ism330dhcx_aux_sens_on_t)numSensors);
+	retVal = ism330dhcx_sh_slave_connected_set(&sfe_dev,
+											   (ism330dhcx_aux_sens_on_t)numSensors);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1291,14 +1383,14 @@ bool QwDevISM330DHCX::setNumberHubSensors(uint8_t numSensors)
 
 bool QwDevISM330DHCX::enableSensorI2C(bool enable)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_sh_master_set(&sfe_dev, (uint8_t)enable);
+	retVal = ism330dhcx_sh_master_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1313,14 +1405,14 @@ bool QwDevISM330DHCX::enableSensorI2C(bool enable)
 
 bool QwDevISM330DHCX::readPeripheralSensor(uint8_t *shReg, uint8_t len)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_sh_read_data_raw_get(&sfe_dev, (ism330dhcx_emb_sh_read_t *)shReg, len);
+	retVal = ism330dhcx_sh_read_data_raw_get(&sfe_dev, shReg, len);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1332,18 +1424,18 @@ bool QwDevISM330DHCX::readPeripheralSensor(uint8_t *shReg, uint8_t len)
 bool QwDevISM330DHCX::getHubStatus()
 {
 
-    int32_t retVal;
-    ism330dhcx_status_master_t tempVal;
+	int32_t retVal;
+	ism330dhcx_status_master_t tempVal;
 
-    retVal = ism330dhcx_sh_status_get(&sfe_dev, &tempVal);
+	retVal = ism330dhcx_sh_status_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if (tempVal.sens_hub_endop == 1)
-        return true;
+	if (tempVal.sens_hub_endop == 1)
+		return true;
 
-    return false;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1358,42 +1450,42 @@ bool QwDevISM330DHCX::getHubStatus()
 bool QwDevISM330DHCX::getExternalSensorNack(uint8_t sensor)
 {
 
-    int32_t retVal;
-    ism330dhcx_status_master_t tempVal;
+	int32_t retVal;
+	ism330dhcx_status_master_t tempVal;
 
-    retVal = ism330dhcx_sh_status_get(&sfe_dev, &tempVal);
+	retVal = ism330dhcx_sh_status_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    switch (sensor)
-    {
-    case 0:
-        if (tempVal.slave0_nack == 1)
-            return true;
-        break;
-    case 1:
-        if (tempVal.slave1_nack == 1)
-            return true;
-        break;
-    case 2:
-        if (tempVal.slave2_nack == 1)
-            return true;
-        break;
-    case 3:
-        if (tempVal.slave3_nack == 1)
-            return true;
-        break;
-    default:
-        return false;
-    }
+	switch (sensor)
+	{
+	case 0:
+		if (tempVal.slave0_nack == 1)
+			return true;
+		break;
+	case 1:
+		if (tempVal.slave1_nack == 1)
+			return true;
+		break;
+	case 2:
+		if (tempVal.slave2_nack == 1)
+			return true;
+		break;
+	case 3:
+		if (tempVal.slave3_nack == 1)
+			return true;
+		break;
+	default:
+		return false;
+	}
 
-    return false;
+	return false;
 }
 
 bool QwDevISM330DHCX::readMMCMagnetometer(uint8_t *magData, uint8_t len)
 {
-    return (readPeripheralSensor(magData, len));
+	return (readPeripheralSensor(magData, len));
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1408,19 +1500,20 @@ bool QwDevISM330DHCX::readMMCMagnetometer(uint8_t *magData, uint8_t len)
 
 bool QwDevISM330DHCX::setHubWriteMode(uint8_t config)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    if (config > 1)
-        return false;
+	if (config > 1)
+		return false;
 
-    // 0 = Write each cycle
-    // 1 = Write once
-    retVal = ism330dhcx_sh_write_mode_set(&sfe_dev, (ism330dhcx_write_once_t)config);
+	// 0 = Write each cycle
+	// 1 = Write once
+	retVal = ism330dhcx_sh_write_mode_set(&sfe_dev,
+										  (ism330dhcx_write_once_t)config);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1436,12 +1529,12 @@ bool QwDevISM330DHCX::setHubWriteMode(uint8_t config)
 bool QwDevISM330DHCX::setHubPassThrough(bool enable)
 {
 
-    int32_t retVal = ism330dhcx_sh_pass_through_set(&sfe_dev, (uint8_t)enable);
+	int32_t retVal = ism330dhcx_sh_pass_through_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1455,14 +1548,14 @@ bool QwDevISM330DHCX::setHubPassThrough(bool enable)
 
 bool QwDevISM330DHCX::setHubFifoBatching(bool enable)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_sh_batch_slave_0_set(&sfe_dev, (uint8_t)enable);
+	retVal = ism330dhcx_sh_batch_slave_0_set(&sfe_dev, (uint8_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1477,14 +1570,14 @@ bool QwDevISM330DHCX::setHubFifoBatching(bool enable)
 bool QwDevISM330DHCX::setHubPullUps(bool enable)
 {
 
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_sh_pin_mode_set(&sfe_dev, (ism330dhcx_shub_pu_en_t)enable);
+	retVal = ism330dhcx_sh_pin_mode_set(&sfe_dev, (ism330dhcx_shub_pu_en_t)enable);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1496,14 +1589,14 @@ bool QwDevISM330DHCX::setHubPullUps(bool enable)
 bool QwDevISM330DHCX::resetSensorHub()
 {
 
-    int32_t retVal;
+	int32_t retVal;
 
-    retVal = ism330dhcx_sh_reset_set(&sfe_dev);
+	retVal = ism330dhcx_sh_reset_set(&sfe_dev);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 //
 //
@@ -1521,33 +1614,35 @@ bool QwDevISM330DHCX::resetSensorHub()
 
 bool QwDevISM330DHCX::setAccelSelfTest(uint8_t val)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    if (val > 2)
-        return false;
+	if (val > 2)
+		return false;
 
-    retVal = ism330dhcx_xl_self_test_set(&sfe_dev, (ism330dhcx_st_xl_t)val);
+	retVal = ism330dhcx_xl_self_test_set(&sfe_dev,
+										 (ism330dhcx_st_xl_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 
 bool QwDevISM330DHCX::setGyroSelfTest(uint8_t val)
 {
-    int32_t retVal;
+	int32_t retVal;
 
-    // 0, 1, or 3
-    if (val > 3)
-        return false;
+	// 0, 1, or 3
+	if (val > 3)
+		return false;
 
-    retVal = ism330dhcx_gy_self_test_set(&sfe_dev, (ism330dhcx_st_g_t)val);
+	retVal = ism330dhcx_gy_self_test_set(&sfe_dev,
+										 (ism330dhcx_st_g_t)val);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    return true;
+	return true;
 }
 //
 //
@@ -1561,16 +1656,16 @@ bool QwDevISM330DHCX::setGyroSelfTest(uint8_t val)
 
 bool QwDevISM330DHCX::checkStatus()
 {
-    ism330dhcx_status_reg_t tempVal;
-    int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
+	ism330dhcx_status_reg_t tempVal;
+	int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if ((tempVal.xlda == 1) && (tempVal.gda == 1))
-        return true;
+	if ((tempVal.xlda == 1) && (tempVal.gda == 1))
+		return true;
 
-    return false;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -1580,52 +1675,71 @@ bool QwDevISM330DHCX::checkStatus()
 
 bool QwDevISM330DHCX::checkAccelStatus()
 {
-    ism330dhcx_status_reg_t tempVal;
-    int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
+	ism330dhcx_status_reg_t tempVal;
+	int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if (tempVal.xlda == 1)
-        return true;
+	if (tempVal.xlda == 1)
+		return true;
 
-    return false;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// checkAccelStatus
+// checkGyroStatus
 //
 // Checks if data is ready for the gyroscope
 
 bool QwDevISM330DHCX::checkGyroStatus()
 {
-    ism330dhcx_status_reg_t tempVal;
-    int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
+	ism330dhcx_status_reg_t tempVal;
+	int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if (tempVal.gda == 1)
-        return true;
+	if (tempVal.gda == 1)
+		return true;
 
-    return false;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-// checkAccelStatus
+// checkTempStatus
 //
 // Checks if data is ready for the temperature sensor
 
 bool QwDevISM330DHCX::checkTempStatus()
 {
-    ism330dhcx_status_reg_t tempVal;
-    int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
+	ism330dhcx_status_reg_t tempVal;
+	int32_t retVal = ism330dhcx_status_reg_get(&sfe_dev, &tempVal);
 
-    if (retVal != 0)
-        return false;
+	if (retVal != 0)
+		return false;
 
-    if (tempVal.tda == 1)
-        return true;
+	if (tempVal.tda == 1)
+		return true;
 
-    return false;
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+// checkWatermarkStatus
+//
+// Checks if the FIFO watermark has been reached
+
+bool QwDevISM330DHCX::checkWatermarkStatus()
+{
+	uint8_t tempVal = 0;
+	int32_t retVal = ism330dhcx_fifo_wtm_flag_get(&sfe_dev, &tempVal);
+
+	if (retVal != 0)
+		return false;
+
+	if (tempVal == 1)
+		return true;
+
+	return false;
 }
