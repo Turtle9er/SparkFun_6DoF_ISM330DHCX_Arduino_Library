@@ -133,3 +133,5 @@
 #define ISM_SH_ODR_52Hz  0x01
 #define ISM_SH_ODR_26Hz  0x02
 #define ISM_SH_ODR_13Hz  0x03
+
+#define FIFO_DATA_OUT_TAG 0x78
