@@ -252,7 +252,7 @@ bool SfeSPI::init(uint8_t cs,  bool bInit)
 {
 
 		//If the transaction settings are not provided by the user they are built here.
-		SPISettings spiSettings = SPISettings(3000000, MSBFIRST, SPI_MODE3); 
+		SPISettings spiSettings = SPISettings(5000000, MSBFIRST, SPI_MODE0); 
 
 		//In addition of the port is not provided by the user, it defaults to SPI here. 
 		return init(SPI, spiSettings, cs, bInit);
@@ -335,32 +335,55 @@ int SfeSPI::writeRegisterRegion(uint8_t i2c_address, uint8_t offset, const uint8
 //
 //
 
-
 int SfeSPI::readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t numBytes)
 {
     if (!_spiPort)
         return -1;
 
-    int i; // counter in loop
-
-		// Apply settings
+    // Apply settings and start transaction
     _spiPort->beginTransaction(_sfeSPISettings);
-		// Signal communication start
-		digitalWrite(_cs, LOW);
-		// A leading "1" must be added to transfer with register to indicate a "read"
-		reg = (reg | SPI_READ);
-    _spiPort->transfer(reg);
+    digitalWrite(_cs, LOW);
 
-		for(i = 0; i < numBytes; i++)
-		{
-			*data++ = _spiPort->transfer(0x00);
-		}
+    // Send the register address with the read bit set
+    _spiPort->transfer(reg | SPI_READ);
 
-		// End transaction
-		digitalWrite(_cs, HIGH);
+    // *** IMPROVEMENT IS HERE ***
+    // Use the bulk transfer method to read all bytes at once
+    _spiPort->transfer(data, numBytes);
+
+    // End transaction
+    digitalWrite(_cs, HIGH);
     _spiPort->endTransaction();
-		return 0; 
 
+    return 0; // Success
 }
+
+//Original method before improvement
+// int SfeSPI::readRegisterRegion(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t numBytes)
+// {
+//     if (!_spiPort)
+//         return -1;
+
+//     int i; // counter in loop
+
+// 		// Apply settings
+//     _spiPort->beginTransaction(_sfeSPISettings);
+// 		// Signal communication start
+// 		digitalWrite(_cs, LOW);
+// 		// A leading "1" must be added to transfer with register to indicate a "read"
+// 		reg = (reg | SPI_READ);
+//     _spiPort->transfer(reg);
+
+// 		for(i = 0; i < numBytes; i++)
+// 		{
+// 			*data++ = _spiPort->transfer(0x00);
+// 		}
+
+// 		// End transaction
+// 		digitalWrite(_cs, HIGH);
+//     _spiPort->endTransaction();
+// 		return 0; 
+
+// }
 
 }
