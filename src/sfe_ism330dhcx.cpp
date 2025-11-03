@@ -843,10 +843,11 @@ uint16_t QwDevISM330DHCX::getFifoStatus()
 //  data         Pointer to an array of sfe_ism_raw_data_t structs to store data.
 //  samples      The number of samples (X, Y, Z sets) to read.
 
-bool QwDevISM330DHCX::getFIFOData(sfe_ism_raw_data_t *data, uint16_t samples)
+bool QwDevISM330DHCX::getFIFOData(sfe_ism_raw_data_t *data, uint8_t *tags, uint16_t samples)
 {
 	// Each sample is 7 bytes (1 tag + 6 data)
-	uint16_t bytesToRead = 1 + (samples * 7);
+	//uint16_t bytesToRead = 1 + (samples * 7);
+	uint16_t bytesToRead = samples * 7;
 
 	// Create a buffer on the stack to hold all raw FIFO data
 	uint8_t rawData[bytesToRead];
@@ -861,6 +862,10 @@ bool QwDevISM330DHCX::getFIFOData(sfe_ism_raw_data_t *data, uint16_t samples)
 		// Calculate the starting index for the current sample's data
 		// The first byte of each 7-byte word is the tag, which we skip (hence ii + 1)
 		uint16_t index = i * 7;
+
+		// Parse the tag byte (rawData[index]) and store it.
+        // Sensor ID is in bits 5:3 of the tag byte.
+        tags[i] = (rawData[index] >> 3) & 0x07;
 
 		// The data is little-endian: LSB then MSB
 		data[i].xData = (int16_t)(rawData[index + 2] << 8) | rawData[index + 1];

@@ -131,7 +131,7 @@ class QwDevISM330DHCX
 		bool setFIFOThresholdInt1(bool enable);
         bool setBatchCounterInt1(bool enable);
 		uint16_t getFifoStatus();
-		bool getFIFOData(sfe_ism_raw_data_t *data, uint16_t samples);
+		bool getFIFOData(sfe_ism_raw_data_t *data, uint8_t *tags, uint16_t samples);
 
 			
 		// Sensor Hub Settings

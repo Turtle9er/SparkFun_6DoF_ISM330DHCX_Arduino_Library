@@ -34,7 +34,7 @@ sfe_ism_data_t accelData;
 sfe_ism_data_t gyroData; 
 
 // Set your chip select pin according to your setup. 
-byte chipSelect = 1;
+byte chipSelect = 10;
 
 void setup(){
 
@@ -89,9 +89,12 @@ void setup(){
 void loop(){
 
 	// Check if both gyroscope and accelerometer data is available.
+	static int printCounter = 0;
 	if( myISM.checkStatus() ){
 		myISM.getAccel(&accelData);
 		myISM.getGyro(&gyroData);
+		  if (printCounter % 10 == 0)
+                {
 		Serial.print("Accelerometer: ");
 		Serial.print("X: ");
 		Serial.print(accelData.xData);
@@ -112,6 +115,8 @@ void loop(){
 		Serial.print("Z: ");
 		Serial.print(gyroData.zData);
 		Serial.println(" ");
+				}
+				printCounter++;
 	}
 
 	delay(100);
