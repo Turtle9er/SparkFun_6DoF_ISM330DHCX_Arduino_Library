@@ -133,6 +133,7 @@ bool QwDevISM330DHCX::setAccelFullScale(uint8_t val)
 	return true;
 }
 
+
 //////////////////////////////////////////////////////////////////////////////
 // setGyroFullScale()
 //
@@ -172,6 +173,60 @@ uint8_t QwDevISM330DHCX::getAccelFullScale()
 
 	ism330dhcx_fs_xl_t val;
 	int32_t retVal = ism330dhcx_xl_full_scale_get(&sfe_dev, &val);
+
+	if (retVal != 0)
+		return -1;
+
+	return (uint8_t)val;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// getAccelDataRate()
+//
+// Retrieves the scale of the accelerometer's readings
+//
+
+uint8_t QwDevISM330DHCX::getAccelDataRate()
+{
+
+	ism330dhcx_odr_xl_t val;
+	int32_t retVal = ism330dhcx_xl_data_rate_get(&sfe_dev, &val);
+
+	if (retVal != 0)
+		return -1;
+
+	return (uint8_t)val;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// getGyroFullScale()
+//
+// Retrieves the scale of the gyro's readings
+//
+
+uint8_t QwDevISM330DHCX::getGyroFullScale()
+{
+
+	ism330dhcx_fs_g_t val;
+	int32_t retVal = ism330dhcx_gy_full_scale_get(&sfe_dev, &val);
+
+	if (retVal != 0)
+		return -1;
+
+	return (uint8_t)val;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// getGyroDataRate()
+//
+// Retrieves the scale of the gyro's readings
+//
+
+uint8_t QwDevISM330DHCX::getGyroDataRate()
+{
+
+	ism330dhcx_odr_g_t val;
+	int32_t retVal = ism330dhcx_gy_data_rate_get(&sfe_dev, &val);
 
 	if (retVal != 0)
 		return -1;

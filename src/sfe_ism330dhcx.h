@@ -86,6 +86,7 @@ class QwDevISM330DHCX
 		bool setAccelFullScale(uint8_t val);
 		bool setGyroFullScale(uint8_t val);
 		uint8_t getAccelFullScale();
+		uint8_t getGyroFullScale();
 
 		uint8_t getUniqueId();
 
@@ -107,6 +108,8 @@ class QwDevISM330DHCX
 		bool setBlockDataUpdate(bool enable = true);
 		uint8_t getBlockDataUpdate();
 		bool setAccelDataRate(uint8_t rate);
+		uint8_t getAccelDataRate();
+		uint8_t getGyroDataRate();
 		bool setAccelPowerMode(int8_t val);
 		bool setGyroDataRate(uint8_t rate);
 		bool enableTimestamp(bool enable = true);
@@ -174,6 +177,8 @@ class QwDevISM330DHCX
 		float convert2000dpsToMdps(int16_t data);
 		float convert4000dpsToMdps(int16_t data);
 		float convertToCelsius(int16_t data);
+
+		//stmdev_ctx_t sfe_dev; 
 
 	private: 
 
