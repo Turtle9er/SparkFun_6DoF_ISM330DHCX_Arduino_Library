@@ -135,6 +135,9 @@ class QwDevISM330DHCX
         bool setBatchCounterInt1(bool enable);
 		uint16_t getFifoStatus();
 		bool getFIFOData(sfe_ism_raw_data_t *data, uint8_t *tags, uint16_t samples);
+		// Sets the Batch Data Rate for the Temperature sensor
+		// rate: 0 = Disabled, 1 = 1.6Hz, 2 = 12.5Hz, 3 = 52Hz
+		bool setTemperatureBatchRate(uint8_t val);
 
 			
 		// Sensor Hub Settings

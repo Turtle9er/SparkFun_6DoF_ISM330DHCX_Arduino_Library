@@ -983,6 +983,22 @@ bool QwDevISM330DHCX::setGyroFifoBatchSet(uint8_t val)
 	return true;
 }
 
+bool QwDevISM330DHCX::setTemperatureBatchRate(uint8_t val)
+{
+
+	int32_t retVal;
+	if (val > 3)
+		return false;
+
+	retVal = ism330dhcx_fifo_temp_batch_set(&sfe_dev,
+                                       (ism330dhcx_odr_t_batch_t) val);
+
+	if (retVal != 0)
+		return false;
+
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 // setFifoTimestampDec()
 //
